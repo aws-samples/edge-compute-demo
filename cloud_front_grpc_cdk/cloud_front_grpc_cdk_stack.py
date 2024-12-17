@@ -36,13 +36,13 @@ class CloudFrontGrpcCdkStack(Stack):
         alb_certificate = acm.Certificate.from_certificate_arn(
             self, 
             "ALBCertificate",
-            certificate_arn="arn:aws:acm:us-west-2:436103886277:certificate/90e32db9-7889-45dc-82e3-b58684c1eced" 
+            certificate_arn="<your-certificate-arn>"  #替换为您的证书arn
         )
 
         cloudfront_certificate = acm.Certificate.from_certificate_arn(
             self, 
             "CloudfrontCertificate",
-            certificate_arn="arn:aws:acm:us-east-1:436103886277:certificate/cd1bd24b-f8ad-4667-95f4-f773fd6d2125" 
+            certificate_arn="<your-certificate-arn>"  #替换为您的证书arn
         )
         
         # 创建第一个gRPC服务
@@ -54,7 +54,7 @@ class CloudFrontGrpcCdkStack(Stack):
             listener_port=443,
             certificate=alb_certificate,
             task_image_options=ecs_patterns.ApplicationLoadBalancedTaskImageOptions(
-                image=ecs.ContainerImage.from_registry("436103886277.dkr.ecr.us-west-2.amazonaws.com/grpc-server"),
+                image=ecs.ContainerImage.from_registry("<your-repository-arn>"), #替换为您的grpc server仓库地址
                 container_port=50051,
                 execution_role=execution_role
             )
@@ -77,7 +77,7 @@ class CloudFrontGrpcCdkStack(Stack):
         )
 
         nginx_container = nginx_task_definition.add_container("nginx",
-            image=ecs.ContainerImage.from_registry("436103886277.dkr.ecr.us-west-2.amazonaws.com/nginx-server"),
+            image=ecs.ContainerImage.from_registry("<your-repository-arn>"), #替换为您的nginx server仓库地址
             memory_limit_mib=1024
         )
 
