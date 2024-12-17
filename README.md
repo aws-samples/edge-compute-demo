@@ -1,65 +1,44 @@
+# CloudFront gRPC feature demo
 
-# Welcome to your CDK Python project!
+## Introduction
+This project is a sample project that allows you to quickly pull up a demo environment using CDK to test CloudFront gRPC related functions.
 
-You should explore the contents of this project. It demonstrates a CDK app with an instance of a stack (`cloud_front_grpc_cdk_stack`)
-which contains an Amazon SQS queue that is subscribed to an Amazon SNS topic.
+## Architecture diagram
+<img width="790" alt="image" src="https://github.com/user-attachments/assets/8c69c7e1-2142-4fcb-b442-800742856851" />
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+## Deployment Instructions
+### Prerequisites
+* Install CDK: https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html
+* You already have an ACM certificate for a custom domain name
 
-This project is set up like a standard Python project.  The initialization process also creates
-a virtualenv within this project, stored under the .venv directory.  To create the virtualenv
-it assumes that there is a `python3` executable in your path with access to the `venv` package.
-If for any reason the automatic creation of the virtualenv fails, you can create the virtualenv
-manually once the init process completes.
+### Make/push images
+* Configure Environment Variables
+```export AWS_ACCOUNT_ID= your-account-id
+export AWS_REGION= your-aws-region```
 
-To manually create a virtualenv on MacOS and Linux:
+* Clone the repository:
+``` https://github.com/aws-samples/edge-compute-demo.git ```
 
-```
-$ python3 -m venv .venv
-```
+* Enter the grpc/examples/python/ path
+```docker build --platform linux/amd64 -t grpc-server .```
+* Enter the nginx/ path
+``` docker build --platform linux/amd64 -t nginx-server . ```
 
-After the init process completes and the virtualenv is created, you can use the following
-step to activate your virtualenv.
+* Tag images
+docker tag grpc-server:latest ${AWS_ACCOUNT_ID}.dkr.ecr.<your-aws-region>.amazonaws.com/grpc-server:latest
+docker tag nginx-server:latest ${AWS_ACCOUNT_ID}.dkr.ecr.<your-aws-region>.amazonaws.com/nginx-server:latest
 
-```
-$ source .venv/bin/activate
-```
+* Login to ECR
+aws ecr get-login-password --region <your-aws-region> | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.<your-aws-region>.amazonaws.com
 
-If you are a Windows platform, you would activate the virtualenv like this:
+* Create ECR repositories
+aws ecr create-repository --repository-name grpc-server --region <your-aws-region>
+aws ecr create-repository --repository-name nginx-server --region <your-aws-region>
 
-```
-% .venv\Scripts\activate.bat
-```
+* Push images to repositories
+docker push $AWS_ACCOUNT_ID.dkr.ecr.<your-aws-region>.amazonaws.com/grpc-server:latest
+docker push $AWS_ACCOUNT_ID.dkr.ecr.<your-aws-region>.amazonaws.com/nginx-server:latest
 
-Once the virtualenv is activated, you can install the required dependencies.
-
-```
-$ pip install -r requirements.txt
-```
-
-At this point you can now synthesize the CloudFormation template for this code.
-
-```
-$ cdk synth
-```
-
-You can now begin exploring the source code, contained in the hello directory.
-There is also a very trivial test included that can be run like this:
-
-```
-$ pytest
-```
-
-To add additional dependencies, for example other CDK libraries, just add to
-your requirements.txt file and rerun the `pip install -r requirements.txt`
-command.
-
-## Useful commands
-
- * `cdk ls`          list all stacks in the app
- * `cdk synth`       emits the synthesized CloudFormation template
- * `cdk deploy`      deploy this stack to your default AWS account/region
- * `cdk diff`        compare deployed stack with current state
- * `cdk docs`        open CDK documentation
-
-Enjoy!
+# Deploy the stack
+* Enter the project root directory
+``` cdk deploy ```
