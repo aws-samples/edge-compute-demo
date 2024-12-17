@@ -13,32 +13,50 @@ This project is a sample project that allows you to quickly pull up a demo envir
 
 ### Make/push images
 * Configure Environment Variables
-```export AWS_ACCOUNT_ID= your-account-id
-export AWS_REGION= your-aws-region```
+```
+export AWS_ACCOUNT_ID= your-account-id
+export AWS_REGION= your-aws-region
+```
 
 * Clone the repository:
-``` https://github.com/aws-samples/edge-compute-demo.git ```
+```
+https://github.com/aws-samples/edge-compute-demo.git
+```
 
 * Enter the grpc/examples/python/ path
-```docker build --platform linux/amd64 -t grpc-server .```
+```
+docker build --platform linux/amd64 -t grpc-server .
+```
 * Enter the nginx/ path
-``` docker build --platform linux/amd64 -t nginx-server . ```
+```
+docker build --platform linux/amd64 -t nginx-server .
+```
 
 * Tag images
+```
 docker tag grpc-server:latest ${AWS_ACCOUNT_ID}.dkr.ecr.<your-aws-region>.amazonaws.com/grpc-server:latest
 docker tag nginx-server:latest ${AWS_ACCOUNT_ID}.dkr.ecr.<your-aws-region>.amazonaws.com/nginx-server:latest
+```
 
 * Login to ECR
+```
 aws ecr get-login-password --region <your-aws-region> | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.<your-aws-region>.amazonaws.com
+```
 
 * Create ECR repositories
+```
 aws ecr create-repository --repository-name grpc-server --region <your-aws-region>
 aws ecr create-repository --repository-name nginx-server --region <your-aws-region>
+```
 
 * Push images to repositories
+```
 docker push $AWS_ACCOUNT_ID.dkr.ecr.<your-aws-region>.amazonaws.com/grpc-server:latest
 docker push $AWS_ACCOUNT_ID.dkr.ecr.<your-aws-region>.amazonaws.com/nginx-server:latest
+```
 
-# Deploy the stack
+### Deploy the stack
 * Enter the project root directory
-``` cdk deploy ```
+```
+cdk deploy
+```
