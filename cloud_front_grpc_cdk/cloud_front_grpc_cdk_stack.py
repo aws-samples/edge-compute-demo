@@ -120,18 +120,3 @@ class CloudFrontGrpcCdkStack(Stack):
             conditions=[elbv2.ListenerCondition.path_patterns(["/*"])], 
             priority=2
         )
-
-        # distribution = cloudfront.Distribution(self, "CloudFrontDistribution",
-        #     default_behavior=cloudfront.BehaviorOptions(
-        #         origin=origins.LoadBalancerV2Origin(
-        #             grpc_service.load_balancer,
-        #             protocol_policy=cloudfront.OriginProtocolPolicy.HTTPS_ONLY
-        #         ),
-        #         viewer_protocol_policy=cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-        #         allowed_methods=cloudfront.AllowedMethods.ALLOW_ALL,
-        #         origin_request_policy=cloudfront.OriginRequestPolicy.ALL_VIEWER,
-        #         cache_policy=cloudfront.CachePolicy.CACHING_DISABLED
-        #     ),
-        #     domain_names=["www.seanmengdemo.com"],
-        #     certificate=cloudfront_certificate
-        # )
